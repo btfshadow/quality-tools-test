@@ -1,0 +1,15 @@
+[submodule "demo-sdk-android"]
+	path = demo-sdk-android
+	url = https://github.com/stone-payments/demo-sdk-android.git
+[submodule "superbowleto"]
+	path = superbowleto
+	url = https://github.com/stone-payments/superbowleto.git
+[submodule "card-interview"]
+	path = card-interview
+	url = https://github.com/stone-payments/card-interview.git
+[submodule "go-coveralls-api"]
+	path = go-coveralls-api
+	url = https://github.com/stone-payments/go-coveralls-api.git
+[submodule "StrangerData"]
+	path = StrangerData
+	url = https://github.com/stone-payments/StrangerData.git
