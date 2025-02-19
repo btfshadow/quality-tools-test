@@ -22,7 +22,7 @@ jobs:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             LC_ALL: "pr_BR.UTF-8"
           with:
-            projectBaseDir: ${{ matrix.project }}
+            projectBaseDir: project/${{ matrix.project }}
             args: >
               --define sonar.projectKey=${{ matrix.project }}
               --define sonar.organization=pastelbinario
@@ -30,12 +30,12 @@ jobs:
           uses: platisd/duplicate-code-detection-tool@master
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            directories: "${{ matrix.project }}/"
+            directories: "project/${{ matrix.project }}/"
         - name: Pull MegaLinter
           run: docker pull oxsecurity/megalinter:v8
         - name: Run MegaLinter for Project ${{ matrix.project }}
           run: |
-            docker run --rm -v $(pwd)/${{ matrix.project }}:/tmp/lint oxsecurity/megalinter:v8
+            docker run --rm -v $(pwd)/project/${{ matrix.project }}:/tmp/lint oxsecurity/megalinter:v8
         - uses: coderabbitai/ai-pr-reviewer@latest
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
