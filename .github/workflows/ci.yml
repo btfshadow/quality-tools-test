@@ -1,0 +1,47 @@
+on:
+  push:
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  analisys:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          project: ['StrangerData', 'card-interview', 'demo-sdk-android', 'go-coveralls-api', 'superbowleto']
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            submodules: 'true'
+            fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+        - name: SonarQube Scan
+          uses: SonarSource/sonarqube-scan-action@v4
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            LC_ALL: "pr_BR.UTF-8"
+          with:
+            projectBaseDir: ${{ matrix.project }}
+            args: >
+              --define sonar.projectKey=${{ matrix.project }}
+              --define sonar.organization=pastelbinario
+        - name: Check for duplicate code
+          uses: platisd/duplicate-code-detection-tool@master
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            directories: "${{ matrix.project }}/"
+        - name: Pull MegaLinter
+          run: docker pull oxsecurity/megalinter:v8
+        - name: Run MegaLinter for Project A
+          run: |
+            docker run --rm -v $(pwd)/project-a:/tmp/lint oxsecurity/megalinter:v8
+          
+
+  multi-tool:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}

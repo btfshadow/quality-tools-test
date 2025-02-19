@@ -1,0 +1,18 @@
+flags:
+  # filter the folder(s) you wish to measure by that flag
+  StrangerData:
+    # only include files in the backend folder
+    paths:
+      - StrangerData/
+  demo-sdk-android:
+    paths:
+      - demo-sdk-android/
+  card-interview:
+    paths:
+      - card-interview/
+  go-coveralls-api:
+    paths:
+      - go-coveralls-api/
+  superbowleto:
+    paths:
+      - superbowleto/
