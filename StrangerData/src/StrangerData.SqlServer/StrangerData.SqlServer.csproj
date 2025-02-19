@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- NuGet properties -->
+    <Id>StrangerData.SqlServer</Id>
+    <Version>101.0.1</Version>
+    <Title>StrangerData</Title>
+    <Authors>Pedro Henrique B. Fernandes;Diego Anckizes;Mateus Dalepiane</Authors>
+    <PackageLicenseUrl>https://github.com/stone-pagamentos/StrangerData/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/stone-pagamentos/StrangerData</PackageProjectUrl>
+    <Description>MS SQL Server Dialect for StrangerData data generator.</Description>
+    <Copyright>StoneCo 2024</Copyright>
+    <PackageTags>fixture;data-builder;fake-data;test-data;integration-test</PackageTags>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <!-- NuGet properties -->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyTitle>StrangerData - SQL Server Dialect</AssemblyTitle>
+    <AssemblyName>StrangerData.SqlServer</AssemblyName>
+    <TargetFrameworks>net452;netstandard2.0;net8.0</TargetFrameworks>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StrangerData\StrangerData.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,94 @@
+version: '2.1'
+
+services:
+  postgres:
+    image: postgres:12.8-alpine
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=touchdown1!
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  yopa:
+    image: 697525377503.dkr.ecr.us-east-1.amazonaws.com/pay-docker-base-images:pagarme-yopa
+    ports:
+      - 47195
+    volumes:
+      - ./yopa-config.yml:/tmp/yopa-in/config.yml:ro
+
+  test:
+    build: .
+    command: npm test
+    environment:
+      - API_ENV=test
+    volumes:
+      - .:/superbowleto
+      - /superbowleto/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      superbowleto-web:
+        condition: service_started
+    links:
+      - postgres
+      - yopa
+      - superbowleto-web
+
+  lint:
+    build: .
+    entrypoint: npm run lint
+    environment:
+      - API_ENV=test
+    volumes:
+      - .:/superbowleto
+      - /superbowleto/node_modules
+
+  migrate:
+    build: .
+    entrypoint: npm run migrate_seed
+    environment:
+      - API_ENV=test
+    volumes:
+      - .:/superbowleto
+      - /superbowleto/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  superbowleto-web:
+    build: .
+    entrypoint: node src/bin/server.js
+    ports:
+      - "3000:3000"
+    environment:
+      - API_ENV=test
+      - PORT=3000
+    volumes:
+      - .:/superbowleto
+      - /superbowleto/node_modules
+    depends_on:
+      - postgres
+      - yopa
+    links:
+      - postgres
+      - yopa
+
+  superbowleto-worker:
+    build: .
+    entrypoint: node src/bin/worker.js
+    environment:
+      - API_ENV=test
+    volumes:
+      - .:/superbowleto
+      - /superbowleto/node_modules
+    depends_on:
+      - postgres
+      - yopa
+    links:
+      - postgres
+      - yopa

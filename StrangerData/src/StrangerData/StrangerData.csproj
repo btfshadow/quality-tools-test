@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- NuGet properties -->
+    <Id>StrangerData</Id>
+    <Version>101.0.1</Version>
+    <Title>StrangerData</Title>
+    <Authors>Pedro Henrique B. Fernandes;Diego Anckizes;Mateus Dalepiane</Authors>
+    <PackageLicenseUrl>https://github.com/stone-pagamentos/StrangerData/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/stone-pagamentos/StrangerData</PackageProjectUrl>
+    <Description>Automatically fills your testing database with random generated data for testing purposes.</Description>
+    <Copyright>StoneCo 2024</Copyright>
+    <PackageTags>fixture;data-builder;fake-data;test-data;integration-test</PackageTags>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <!-- NuGet properties -->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyTitle>StrangerData</AssemblyTitle>
+    <AssemblyName>StrangerData</AssemblyName>
+    <TargetFrameworks>net452;netstandard2.0;net8.0</TargetFrameworks>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <Reference Include="System.Configuration" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

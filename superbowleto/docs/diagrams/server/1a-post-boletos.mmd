@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant Client
+    participant API
+    participant Database
+    participant Provider
+
+    Client ->>+ API: HTTP POST /boletos
+        Note over Client,API: Body: boleto_info (amount, expiration, ...), queue_url
+    API ->>+ Database: db.create()
+    Database -->>- API: "created"
+    API ->>+ Provider: register()
+    Provider -->>- API: status
+    API ->>+ Database: db.update(status)
+    Database -->>- API: "updated"
+    API -->>- Client: 201 created

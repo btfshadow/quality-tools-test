@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant Client
+    participant API
+    participant Database
+
+    Client ->>+ API: HTTP GET /boletos
+    API ->>+ Database: db.findAll()
+    Database -->>- API: boletos
+    API -->>- Client: 200 ok

@@ -1,0 +1,93 @@
+name: Lint tests and sonar
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 8.17
+        cache: 'npm'
+
+    - name: Run ci (install)
+      run: npm ci
+
+    - name: Run lint
+      run: npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Instalar Docker Compose Standalone
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      id: configure-ecr
+      with:
+        aws-access-key-id: ${{ secrets.EXPORTED_PAGARME_DOCKER_IMAGES_AWS_PULL_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.EXPORTED_PAGARME_DOCKER_IMAGES_AWS_PULL_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        mask-aws-account-id: "no"
+
+    - name: Login no Elastic Container Registry / ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Run tests
+      run: make test-ci
+
+    - name: Upload Test Coverage
+      uses: actions/upload-artifact@v3
+      with:
+        name: superbowleto-coverage
+        path: |
+          coverage/
+
+  sonar:
+    name: Sonar
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Download Coverage
+      uses: actions/download-artifact@v3
+      with:
+        name: superbowleto-coverage
+        path: |
+          coverage/
+
+    - name: Override Coverage Source Path for Sonar
+      run: |
+        sed -i 's/\/superbowleto\/src\//src\//g' coverage/lcov.info
+    
+    - name: Run Sonar
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.EXPORTED_PAGARME_SONAR_TOKEN }}
