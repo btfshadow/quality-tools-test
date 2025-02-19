@@ -36,6 +36,14 @@ jobs:
         - name: Run MegaLinter for Project ${{ matrix.project }}
           run: |
             docker run --rm -v $(pwd)/${{ matrix.project }}:/tmp/lint oxsecurity/megalinter:v8
+        - uses: coderabbitai/ai-pr-reviewer@latest
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          with:
+            debug: false
+            review_simple_changes: false
+            review_comment_lgtm: false
           
 
   multi-tool:
