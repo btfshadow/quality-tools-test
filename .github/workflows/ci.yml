@@ -33,9 +33,9 @@ jobs:
             directories: "${{ matrix.project }}/"
         - name: Pull MegaLinter
           run: docker pull oxsecurity/megalinter:v8
-        - name: Run MegaLinter for Project A
+        - name: Run MegaLinter for Project ${{ matrix.project }}
           run: |
-            docker run --rm -v $(pwd)/project-a:/tmp/lint oxsecurity/megalinter:v8
+            docker run --rm -v $(pwd)/${{ matrix.project }}:/tmp/lint oxsecurity/megalinter:v8
           
 
   multi-tool:
